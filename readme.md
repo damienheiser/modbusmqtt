@@ -10,9 +10,11 @@ This software was created to harvest data from the Deye SUN-ECD and send it to y
 # Setup
 
 ```
+sudo su -
 git clone https://github.com/TradeFace/shinemonitor.git
 cd shinemonitor
-pip install -r requirements.txt
+pip3 install pipenv
+pipenv install
 cp .env.sample .env
 vim .env 
 ```
@@ -20,7 +22,7 @@ Update your setting and save
 
 Start the server
 ```
-./main.py
+pipenv run python main.py
 ```
 
 In your router point www.shinemonitor.com to the IP of your new modbus server.
