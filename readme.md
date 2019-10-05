@@ -12,6 +12,7 @@ This software was created to harvest data from the Deye SUN-ECD and send it to y
 ```
 git clone https://github.com/TradeFace/shinemonitor.git
 cd shinemonitor
+pip install -r requirements.txt
 cp .env.sample .env
 vim .env 
 ```
