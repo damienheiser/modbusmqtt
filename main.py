@@ -22,11 +22,12 @@ class ModbusMqtt:
 
     def __init__(self):
 
-        self.delay = float(os.getenv("delay"))
-        self.debug = os.getenv("debug")
+        self.delay = float(os.getenv("delay"))        
+        self.debug = bool(os.getenv("debug"))
        
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+        print (os.getenv("modbus_server_host"))
         self.server.bind((os.getenv("modbus_server_host"), int(os.getenv("modbus_server_port"))))  
         self.server.listen(10) 
 
