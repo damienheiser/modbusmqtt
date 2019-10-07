@@ -15,13 +15,22 @@ class Shine:
 
     def map(self, data):
 
-        #TODO: find out with function to call from data  
-        return self.map_status(data['pdu']['data']) 
+        if data['pdu']['function_id'] == 1:
+            return {}  
+        elif data['pdu']['function_id'] == 2:
+            return {}  
+        elif data['pdu']['function_id'] == 3:
+            return {} 
+        elif data['pdu']['function_id'] == 17:
+            return self.map_status(data['pdu']['data']) 
+        elif data['pdu']['function_id'] == 19:
+            return {} 
+        return {'error':'unknown function'}
 
     def map_status(self, data):
-      
+       
         return {
-            #'device': unpack('10s', data[12:22])[0], # returns b'xyz' json can't parse
+            'device': str(unpack('10s', data[12:22])[0], 'utf-8'),
             'rated_power': unpack('>H', data[38:40])[0]/10.0,
             'mppt_channels': unpack('>B', data[42:43])[0],
             'phase': unpack('>B', data[43:44])[0],
