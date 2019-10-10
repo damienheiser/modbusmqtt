@@ -13,16 +13,19 @@ This software was created to harvest data from the Deye SUN-ECD and send it to y
 sudo su -
 git clone https://github.com/TradeFace/shinemonitor.git
 cd shinemonitor
-pip3 install pipenv
-pipenv install
+pip3 install paho-mqtt python-dotenv
 cp .env.sample .env
 vim .env 
 ```
-Update your setting and save
+Update your settings and save
 
-Start the server
+Install as a service
 ```
-pipenv run python main.py
+./install.sh
+```
+or just run it on the foreground
+```
+python3 ./main.py
 ```
 
 In your router point www.shinemonitor.com to the IP of your new modbus server.
