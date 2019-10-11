@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/python3 -u main.py
-WorkingDirectory=/opt/shinemonitor
+WorkingDirectory={path}
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
