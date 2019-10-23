@@ -30,6 +30,11 @@ Set your configuration (restart the service when your done editing)
 vim /etc/modbusmqtt/modbusmqtt.conf
 ```
 
+Service
+```
+service modbusmqtt.service [start|stop|restart|status]
+```
+
 
 In your router point www.shinemonitor.com to the IP of your new modbus server.
 ```

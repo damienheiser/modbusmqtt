@@ -3,8 +3,8 @@ SERVICE=modbusmqtt
 
 systemctl stop $SERVICE.service
 
-CONF_DIR = /etc/$SERVICE
-MAPS_DIR = $CONF_DIR/devices
+CONF_DIR=/etc/$SERVICE
+MAPS_DIR=$CONF_DIR/devices
 mkdir -p $MAPS_DIR
 
 FILE=$CONF_DIR/$SERVICE.conf
