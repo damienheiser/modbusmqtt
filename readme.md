@@ -104,7 +104,6 @@ returns
 - the instance of a device should handle commands
 - device unpack_string should check for allowable chars
 - device slice_data add other ctypes
-- move to other repo to better reflect the scope
 
 # License 
 Free to use, modify, distribute, what ever you want. I cannot be held responsible for any problems, damages, etc. 
