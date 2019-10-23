@@ -1,11 +1,12 @@
-Shinemonitor ModbusMQTT
+ModbusMQTT
 =====================
 
-# What is it?
-Shinemonitor ModbusMQTT fakes the shinemonitor.com modbus server and queries the WiFi-RTU periodically.
+ModbusMQTT fakes the shinemonitor.com modbus server. It queries the WiFi-RTU periodically and sends the gathered data to your MQTT-broker.
 
-# Who can use this? 
 This software was created to harvest data from the Deye SUN-ECD and send it to your MQTT-broker, instead sending your best data to China/Singapore. https://www.aliexpress.com/item/32872867730.html 
+
+# Plans
+Rewrite to support more devices. It is at this point a single purpose solution. See todolist below 
 
 # Setup
 
@@ -13,8 +14,6 @@ This software was created to harvest data from the Deye SUN-ECD and send it to y
 sudo su -
 git clone https://github.com/TradeFace/shinemonitor.git
 cd shinemonitor
-cp .env.sample .env
-vim .env 
 ```
 Update your settings and save
 
@@ -26,6 +25,11 @@ Install it as a service
 ```
 make install
 ```
+Set your configuration (restart the service when your done editing)
+```
+vim /etc/modbusmqtt/modbusmqtt.conf
+```
+
 
 In your router point www.shinemonitor.com to the IP of your new modbus server.
 ```
@@ -86,6 +90,16 @@ returns
   "DC_current_4": 1.7
 }
 ```
+
+# Todo
+- device.py should be rewritten to a more general device interface
+- device name should be part off the mqtt topic 
+- device definition should allow mqtt topic templating
+- load devices on init
+- the instance of a device should handle commands
+- device unpack_string should check for allowable chars
+- device slice_data add other ctypes
+- move to other repo to better reflect the scope
 
 # License 
 Free to use, modify, distribute, what ever you want. I cannot be held responsible for any problems, damages, etc. 

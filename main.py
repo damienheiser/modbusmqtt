@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 import sys 
 from modbusmqtt import ModbusMqtt
-from dotenv import load_dotenv
+import configparser
 
 if __name__ == '__main__':
-    load_dotenv()
-    server = ModbusMqtt()
+
+    config = configparser.ConfigParser()
+    config.read(['./setup/settings.conf','/etc/modbusmqtt/modbusmqtt.conf'])
+
+    server = ModbusMqtt(config)
     # server.on_recv()
     # sys.exit(1)
     try:

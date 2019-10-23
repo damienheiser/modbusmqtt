@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 import json
 
 from . import modbusmapping as mm
-from . import shine as s
+from . import device 
 
 class ModbusMqtt:
 
@@ -16,27 +16,31 @@ class ModbusMqtt:
     delay = 0.0001
     debug = False
     mqtt_topic = "modbus"
+    config = []
 
-    def __init__(self):
+    def __init__(self, config):
 
-        self.delay = float(os.getenv("delay"))        
-        self.debug = False if os.getenv("debug") == 'false' else True
+        self.config = config
+        self.delay = float(config['General']["delay"])        
+        self.debug = False if config['General']["debug"] == 'false' else True
                
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)      
-        self.server.bind((os.getenv("modbus_server_host"), int(os.getenv("modbus_server_port"))))  
+        self.server.bind((config['Modbus']['host'], int(config['Modbus']['port'])))  
         self.server.listen(10) 
 
-        self.mqtt_topic = os.getenv("mqtt_topic")
+     
+        self.mqtt_topic = config['MQTT']['topic']
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.enable_logger()
-        self.mqtt_client.username_pw_set(os.getenv("mqtt_user"), os.getenv("mqtt_password"))
-        self.mqtt_client.connect(os.getenv("mqtt_host"), int(os.getenv("mqtt_port")), 60)
+        self.mqtt_client.username_pw_set(config['MQTT']['user'], config['MQTT']['pass'])
+        self.mqtt_client.connect(config['MQTT']['host'], int(config['MQTT']['port']), 60)        
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.loop_start()
 
-        self.monitor = s.Shine()
+        self.monitor = device.Device()
         self.mapper = mm.ModbusMapping()
+        #TODO: load devices / 
 
 
     def connack_string(self, state):
@@ -49,6 +53,7 @@ class ModbusMqtt:
             'Connection refused - not authorised'
         ]
         return states[state]
+
 
     def on_connect(self, client, userdata, flags, rc):
 
@@ -97,7 +102,9 @@ class ModbusMqtt:
     def exec_commands(self, connection):
 
         ts = int(time.time())
-        if ts == self.last_ts or ts % int(os.getenv('status_command_every')) != 0:
+        #TMP:config['General']['status_command_every'] 
+        #TODO: the instance of a device should handle commands
+        if ts == self.last_ts or ts % int(config['General']['status_command_every']) != 0:
             self.last_ts = ts
             return 
         self.last_ts = ts
@@ -105,7 +112,7 @@ class ModbusMqtt:
         if self.transaction >= 65535:
             self.transaction = 1
 
-        #TODO: shine() should solve this  
+       
         cmd = "{:04x}00010003001100".format(self.transaction)
         if self.debug:
             print(cmd)
@@ -123,6 +130,9 @@ class ModbusMqtt:
         if self.debug:
             print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
             print(json.dumps(function_map))
+            return
+
+        #TODO: device name should be part off the topic
         self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])), function_map['state'])
         self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, modbus_map['header']['unit_id'])), json.dumps(function_map))
 

@@ -1,0 +1,5 @@
+device:
+    name: Wifi-RTU
+    modbus: tcp
+    functions: 
+        - function: !include ./maps/shine_17.yaml         
