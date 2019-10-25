@@ -104,7 +104,7 @@ class ModbusMqtt:
         ts = int(time.time())
         #TMP:config['General']['status_command_every'] 
         #TODO: the instance of a device should handle commands
-        if ts == self.last_ts or ts % int(config['General']['status_command_every']) != 0:
+        if ts == self.last_ts or ts % int(self.config['General']['status_command_every']) != 0:
             self.last_ts = ts
             return 
         self.last_ts = ts
