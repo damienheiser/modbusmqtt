@@ -80,7 +80,7 @@ class ModbusMqtt:
                     self.s.settimeout(1.0)
 
                     # All data received < 1024 bytes 
-                    self.data = self.s.recv(1024) 
+                    self.data = self.s.recv(272) 
                     if self.data: 
                         self.on_recv() 
                     else: 
