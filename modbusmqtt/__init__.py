@@ -4,6 +4,7 @@ import select
 import time
 import paho.mqtt.client as mqtt
 import json
+import requests
 
 from . import modbusmapping as mm
 from . import device 
@@ -13,7 +14,7 @@ class ModbusMqtt:
     list_of_clients = [] 
     last_ts = 0
     transaction = 0
-    delay = 0.0001
+    delay = 0.1
     debug = False
     mqtt_topic = "modbus"
     config = []
@@ -29,9 +30,13 @@ class ModbusMqtt:
         self.server.bind((config['Modbus']['host'], int(config['Modbus']['port'])))  
         self.server.listen(10) 
 
+        self.emoncms_host = config['Emoncms']['host']
+        self.emoncms_node = config['Emoncms']['node']
+        self.emoncms_apikey = config['Emoncms']['writeapikey'] 
      
         self.mqtt_topic = config['MQTT']['topic']
         self.mqtt_client = mqtt.Client()
+        self.mqtt_client.on_publish = self.on_publish
         self.mqtt_client.enable_logger()
         self.mqtt_client.username_pw_set(config['MQTT']['user'], config['MQTT']['pass'])
         self.mqtt_client.connect(config['MQTT']['host'], int(config['MQTT']['port']), 60)        
@@ -41,7 +46,6 @@ class ModbusMqtt:
         self.monitor = device.Device()
         self.mapper = mm.ModbusMapping()
         #TODO: load devices / 
-
 
     def connack_string(self, state):
         states = [
@@ -59,6 +63,23 @@ class ModbusMqtt:
 
         print("MQTT Connection state: %s" % self.connack_string(rc))
         client.subscribe("$SYS/#")
+
+    def on_publish (self, client, userdata, result):
+
+        print ("data published \n")
+        pass
+
+    def emoncms_post (self, host, writeapikey, node, data):
+        emonCmsUpload = { 'apikey' : writeapikey,
+                            'node' : node,
+                        'fulljson' : data }
+
+        print ('Posting to Emoncms')
+        print (emonCmsUpload)
+
+        e = requests.post (host + '/input/post', data=emonCmsUpload)
+        print (e)
+        return
 
 
     def main_loop(self):
@@ -126,21 +147,41 @@ class ModbusMqtt:
 
         modbus_map = self.mapper.tcp(self.data) 
         function_map = self.monitor.map(modbus_map)
+        device_id = modbus_map['header']['unit_id']
         
         if self.debug:
             print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
             print(json.dumps(function_map))
-            return
+            #return
+
+        ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device_id)
+        ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device_id)
+
+        ha_config = {'name': 'solarinverter', 
+                     'device_class': 'power',
+                     'state_topic': ha_state_topic,
+                     'json_attributes_topic': ha_json_attr_topic,
+                     'unique_id': device_id}
+        #Send HA Config Packet each time
+        ret = self.mqtt_client.publish(("%s/%d/config" % (self.mqtt_topic, device_id)), json.dumps(ha_config))
+        print (ret)
+        print (json.dumps(ha_config))
 
         #TODO: device name should be part off the topic
-        self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])), function_map['state'])
-        self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, modbus_map['header']['unit_id'])), json.dumps(function_map))
+        ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device_id)), function_map['state'])
+        print (ret)
+        print (function_map['state'])
 
+        ret = self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, device_id)), json.dumps(function_map))
+        print (ret)
+        print (json.dumps(function_map))
+
+        #ret = self.emoncms_post (self.emoncms_host, self.emoncms_apikey, self.emoncms_node, json.dumps(function_map))
+        #print (ret)
 
     def on_accept(self):
 
         clientsock, clientaddr = self.server.accept() 
         print (clientaddr[0], "connected")   
         self.list_of_clients.append(clientsock)
-
 
