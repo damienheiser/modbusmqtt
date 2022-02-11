@@ -5,6 +5,9 @@ ModbusMQTT fakes the shinemonitor.com modbus server. It queries the WiFi-RTU per
 
 This software was created to harvest data from the Deye SUN-ECD and send it to your MQTT-broker, instead sending your best data to China/Singapore. https://www.aliexpress.com/item/32872867730.html 
 
+# Change Log
+Modified MQTT messages to conform to Home Assistant, placed Home Assistant Configuration in.
+
 # Plans
 Rewrite to support more devices. It is at this point a single purpose solution. See todolist below 
 
@@ -12,8 +15,8 @@ Rewrite to support more devices. It is at this point a single purpose solution. 
 
 ```
 sudo su -
-git clone https://github.com/TradeFace/shinemonitor.git
-cd shinemonitor
+git clone https://github.com/damienheiser/modbusmqtt
+cd modbusmqtt
 ```
 Update your settings and save
 
