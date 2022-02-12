@@ -147,10 +147,11 @@ class ModbusMqtt:
 
         modbus_map = self.mapper.tcp(self.data) 
         function_map = self.monitor.map(modbus_map)
-        device_id = modbus_map['header']['unit_id']
+        #device_id = modbus_map['header']['unit_id']
+        device_id = function_map['device']
         
         if self.debug:
-            print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
+            print(("%s/%d/state" % (self.mqtt_topic, device_id)))
             print(json.dumps(function_map))
             #return
 
@@ -160,8 +161,10 @@ class ModbusMqtt:
         ha_config = {'name': 'Grid Tied Inverter Limiter', 
                      'device_class': 'energy',
                      'state_class' : 'measurement',
+                     'unit_of_measurement': 'kWh'
                      'last_reset' : '1970-01-01T00:00:00+00:00',
                      'state_topic': ha_state_topic,
+                     'last_reset_topic': ha_state_topic,
                      'json_attributes_topic': ha_json_attr_topic,
                      'unique_id': device_id}
         #Send HA Config Packet each time
@@ -170,7 +173,7 @@ class ModbusMqtt:
         print (json.dumps(ha_config))
 
         #TODO: device name should be part off the topic
-        ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device_id)), function_map['state'])
+        ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device_id)), function_map['total_energy'])
         print (ret)
         print (function_map['state'])
 
