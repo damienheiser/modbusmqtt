@@ -157,7 +157,7 @@ class ModbusMqtt:
 
         ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device)
         ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device)
-        ha_sensor_name = "Grid Tied Inverter Limiter %s" % (device)
+        ha_sensor_name = 'Grid Tied Inverter Limiter ' + device
 
         ha_config = {'name': ha_sensor_name, 
                      'device_class': 'energy',
@@ -169,15 +169,19 @@ class ModbusMqtt:
                      'json_attributes_topic': ha_json_attr_topic,
                      'unique_id': device}
         #Send HA Config Packet each time
+        print ('Config...')
         ret = self.mqtt_client.publish(("%s/%d/config" % (self.mqtt_topic, device)), json.dumps(ha_config))
         print (ret)
         print (json.dumps(ha_config))
 
         #TODO: device name should be part off the topic
+        print ('State...')
+        print function_map['total_energy']
         ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device)), function_map['total_energy'])
         print (ret)
         print (function_map['state'])
 
+        print ('Attr...')
         ret = self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, device)), json.dumps(function_map))
         print (ret)
         print (json.dumps(function_map))
