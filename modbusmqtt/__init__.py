@@ -148,18 +148,17 @@ class ModbusMqtt:
         modbus_map = self.mapper.tcp(self.data) 
         function_map = self.monitor.map(modbus_map)
         device_id = modbus_map['header']['unit_id']
-        device = function_map['device']
+        #device = function_map['device']
         
         if self.debug:
             print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
             print(json.dumps(function_map))
             #return
 
-        ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device)
-        ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device)
-        ha_sensor_name = "Grid Tied Inverter Limiter " + device
+        ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device_id)
+        ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device_id)
 
-        ha_config = {'name': ha_sensor_name, 
+        ha_config = {'name': 'Grid Tied Inverter Limiter', 
                      'device_class': 'energy',
                      'state_class' : 'measurement',
                      'unit_of_measurement': 'kWh',
@@ -167,10 +166,10 @@ class ModbusMqtt:
                      'state_topic': ha_state_topic,
                      'last_reset_topic': ha_state_topic,
                      'json_attributes_topic': ha_json_attr_topic,
-                     'unique_id': device}
+                     'unique_id': device_id}
         #Send HA Config Packet each time
         print ('Config...')
-        ret = self.mqtt_client.publish(("%s/%d/config" % (self.mqtt_topic, device)), json.dumps(ha_config))
+        ret = self.mqtt_client.publish(("%s/%d/config" % (self.mqtt_topic, device_id)), json.dumps(ha_config))
         if self.debug:
             print (ret)
             print (json.dumps(ha_config))
@@ -178,13 +177,13 @@ class ModbusMqtt:
         #TODO: device name should be part off the topic
         print ('State...')
         print (function_map['total_energy'])
-        ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device)), function_map["total_energy"])
+        ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device_id)), function_map["total_energy"])
         if self.debug:
             print (ret)
             print (function_map['state'])
 
         print ('Attr...')
-        ret = self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, device)), json.dumps(function_map))
+        ret = self.mqtt_client.publish(("%s/%d/attr" % (self.mqtt_topic, device_id)), json.dumps(function_map))
         if self.debug:
             print (ret)
             print (json.dumps(function_map))
