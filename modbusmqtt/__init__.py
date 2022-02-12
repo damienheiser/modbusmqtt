@@ -151,15 +151,16 @@ class ModbusMqtt:
         device_name = function_map['device']
         
         if self.debug:
-            print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
-            print(function_map['device'])
+            print(("%s/%d/state" % (self.mqtt_topic, device_name)))
+            print(device_name)
             print(json.dumps(function_map))
             #return
 
         ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device_name)
         ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device_name)
+        ha_device_name = "Grid Tied Inverter Limiter" +  device_name
 
-        ha_config = {'name': 'Grid Tied Inverter Limiter' + device_name, 
+        ha_config = {'name': ha_device_name, 
                      'device_class': 'energy',
                      'state_class' : 'measurement',
                      'unit_of_measurement': 'kWh',
