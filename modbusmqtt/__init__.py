@@ -159,8 +159,8 @@ class ModbusMqtt:
 
         ha_config = {'name': 'Grid Tied Inverter Limiter', 
                      'device_class': 'energy',
-                     'state_class' : 'measurement'
-                     'last_reset' : '1970-01-01T00:00:00+00:00'
+                     'state_class' : 'measurement',
+                     'last_reset' : '1970-01-01T00:00:00+00:00',
                      'state_topic': ha_state_topic,
                      'json_attributes_topic': ha_json_attr_topic,
                      'unique_id': device_id}
