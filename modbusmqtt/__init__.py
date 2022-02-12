@@ -147,11 +147,11 @@ class ModbusMqtt:
 
         modbus_map = self.mapper.tcp(self.data) 
         function_map = self.monitor.map(modbus_map)
-        device_id = function_map["device"]
+        device_id = str(function_map["device"])
         
         if self.debug:
             #print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
-            print(device_name)
+            print(device_id)
             #print(("%s/%s/state" % (self.mqtt_topic, device_name)))
             print(json.dumps(function_map))
             #return
