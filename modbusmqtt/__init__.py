@@ -176,7 +176,7 @@ class ModbusMqtt:
 
         #TODO: device name should be part off the topic
         print ('State...')
-        print function_map['total_energy']
+        print (function_map['total_energy'])
         ret = self.mqtt_client.publish(("%s/%d/state" % (self.mqtt_topic, device)), function_map['total_energy'])
         print (ret)
         print (function_map['state'])
