@@ -31,7 +31,7 @@ class ModbusMqtt:
         self.server.listen(10) 
 
         self.emoncms_host = config['Emoncms']['host']
-        self.emoncms_node = config['Emoncms']['node']
+        self.emoncms_node = 'GridTiedInverterLimiter'
         self.emoncms_apikey = config['Emoncms']['writeapikey'] 
      
         self.mqtt_topic = config['MQTT']['topic']
@@ -160,7 +160,7 @@ class ModbusMqtt:
         ha_json_attr_topic = "%s/%s/attr" % (self.mqtt_topic, device_id)
         #ha_device_name = "Grid Tied Inverter Limiter" +  device_name
 
-        ha_config = {'name': 'Grid Tied Inverter Limiter' + device_id, 
+        ha_config = {'name': 'Grid Tied Inverter Limiter ' + device_id, 
                      'device_class': 'energy',
                      'state_class' : 'measurement',
                      'unit_of_measurement': 'kWh',
@@ -192,7 +192,7 @@ class ModbusMqtt:
             print (ret)
             print (json.dumps(function_map))
 
-        #ret = self.emoncms_post (self.emoncms_host, self.emoncms_apikey, self.emoncms_node, json.dumps(function_map))
+        #ret = self.emoncms_post (self.emoncms_host, self.emoncms_apikey, self.emoncms_node + device_id, json.dumps(function_map))
         #print (ret)
 
     def on_accept(self):
