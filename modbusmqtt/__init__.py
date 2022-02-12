@@ -162,7 +162,7 @@ class ModbusMqtt:
 
         ha_config = {'name': 'Grid Tied Inverter Limiter ' + device_id, 
                      'device_class': 'energy',
-                     'state_class' : 'measurement',
+                     'state_class' : 'total_increasing',
                      'unit_of_measurement': 'kWh',
                      'last_reset' : '1970-01-01T00:00:00+00:00',
                      'state_topic': ha_state_topic,
