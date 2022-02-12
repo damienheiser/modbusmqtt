@@ -159,7 +159,7 @@ class ModbusMqtt:
         ha_state_topic = "%s/%d/state" % (self.mqtt_topic, device_name)
         ha_json_attr_topic = "%s/%d/attr" % (self.mqtt_topic, device_name)
 
-        ha_config = {'name': 'Grid Tied Inverter Limiter', 
+        ha_config = {'name': 'Grid Tied Inverter Limiter' + device_name, 
                      'device_class': 'energy',
                      'state_class' : 'measurement',
                      'unit_of_measurement': 'kWh',
