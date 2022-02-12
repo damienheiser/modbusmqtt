@@ -32,10 +32,14 @@ Set your configuration (restart the service when your done editing)
 ```
 vim /etc/modbusmqtt/modbusmqtt.conf
 ```
+Set the following topic prefix for Home Assistant (unless configured differently in your HA config)
+```
+topic = homeassistant/solarinverter
+```
 
 Service
 ```
-service modbusmqtt.service [start|stop|restart|status]
+service modbusmqtt [start|stop|restart|status]
 ```
 
 
