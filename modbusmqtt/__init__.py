@@ -151,7 +151,7 @@ class ModbusMqtt:
         device_name = function_map['device']
         
         if self.debug:
-            print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id']))
+            print(("%s/%d/state" % (self.mqtt_topic, modbus_map['header']['unit_id'])))
             print(device_name)
             print(json.dumps(function_map))
             #return
